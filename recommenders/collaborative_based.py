@@ -40,7 +40,9 @@ from sklearn.feature_extraction.text import CountVectorizer
 # Importing data
 movies_df = pd.read_csv('resources/data/movies.csv',sep = ',')
 ratings_df = pd.read_csv('resources/data/ratings.csv')
+#ratings_df = ratings_df.merge(movies_df, on='movieId')
 ratings_df.drop(['timestamp'], axis=1,inplace=True)
+
 
 # We make use of an SVD model trained on a subset of the MovieLens 10k dataset.
 model=pickle.load(open('resources/models/small_svd.pkl', 'rb'))
@@ -64,6 +66,8 @@ def prediction_item(item_id):
     reader = Reader(rating_scale=(0, 5))
     load_df = Dataset.load_from_df(ratings_df,reader)
     a_train = load_df.build_full_trainset()
+    model.fit(a_train)
+
 
     predictions = []
     for ui in a_train.all_users():
@@ -118,7 +122,7 @@ def collab_model(movie_list,top_n=10):
 
     """
 
-    indices = pd.Series(movies_df['title'])
+    indices = pd.Series(movies_df.index, index=movies_df['title'])
     movie_ids = pred_movies(movie_list)
     df_init_users = ratings_df[ratings_df['userId']==movie_ids[0]]
     for i in movie_ids :
