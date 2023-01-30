@@ -25,9 +25,8 @@
 	https://docs.streamlit.io/en/latest/
 
 """
-# install numpy and surprise packages
-!pip install numpy
-!pip install scikit-surprise
+# install scikit-surprise
+pip install scikit-surprise
 
 # Streamlit dependencies
 import streamlit as st
