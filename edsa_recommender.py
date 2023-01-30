@@ -25,8 +25,7 @@
 	https://docs.streamlit.io/en/latest/
 
 """
-# install surprise
-pip install surprise
+
 
 # Streamlit dependencies
 import streamlit as st
