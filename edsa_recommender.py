@@ -42,7 +42,6 @@ title_list = load_movie_titles('resources/data/movies.csv')
 
 # App declaration
 def main():
-	
 	st.info("Team Information - Experts and their Roles")
 	# You can read a markdown file from supporting resources folder
 	st.markdown("This Web app has been adapted and developed by the Infinity AI, a                              \
@@ -64,7 +63,7 @@ def main():
 		st.markdown('Josiah Aramide is the Infinity AI CEO')
 	if st.button('Tshepiso'): # information is hidden if button is clicked
 		st.markdown('Tshepiso Padi is the Infinity AI Product Owner')
-    	if st.button('Ndinnanyi'): # information is hidden if button is clicked
+	if st.button('Ndinnanyi'): # information is hidden if button is clicked
 		st.markdown('Ndinanyi Justice is the Infinity AI Brand Developer')
 	
     	# DO NOT REMOVE the 'Recommender System' option below, however,
