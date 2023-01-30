@@ -42,31 +42,54 @@ title_list = load_movie_titles('resources/data/movies.csv')
 
 # App declaration
 def main():
+	st.info("Team Information - Experts and their Roles")
+	# You can read a markdown file from supporting resources folder
+	st.markdown("This Web app has been adapted and developed by the Infinity AI, a                              \
+	leading data science firm with AI-powered solutions and its own R&D Center.                              \
+	Infinity AI’s mission is to help our clients improve competitiveness and get great results from their work.          \
+	We strive to reach these goals applying innovative and proprietary development technologies,             \
+	providing exceptional services, and using excellent professional expertise.                            \n\
+	We help businesses get valuable insights into data, automate repetitive tasks,                          \
+	enhance performance, add AI-driven features, and prevent cost overruns.")
+
+	st.subheader("Meet the Team")
+	if st.button('Aniedi'): # information is hidden if button is clicked
+		st.markdown('Aniedi Oboho-Etuk is a Infinity AI Developer')
+	if st.button('Bongani'): # information is hidden if button is clicked
+		st.markdown('Bongani Mavuso is the Infinity AI Project Manager')
+	if st.button('Manoko'): # information is hidden if button is clicked
+		st.markdown('Manoko Langa is an Infity AI Developer/Strategist')
+	if st.button('Josiah'): # information is hidden if button is clicked
+		st.markdown('Josiah Aramide is the Infinity AI CEO')
+	if st.button('Tshepiso'): # information is hidden if button is clicked
+		st.markdown('Tshepiso Padi is the Infinity AI Product Owner')
+    	if st.button('Ndinnanyi'): # information is hidden if button is clicked
+		st.markdown('Ndinanyi Justice is the Infinity AI Brand Developer')
 
     # DO NOT REMOVE the 'Recommender System' option below, however,
     # you are welcome to add more options to enrich your app.
-    page_options = ["Recommender System","Solution Overview"]
+	page_options = ["Recommender System","Solution Overview"]
 
-    # -------------------------------------------------------------------
-    # ----------- !! THIS CODE MUST NOT BE ALTERED !! -------------------
-    # -------------------------------------------------------------------
-    page_selection = st.sidebar.selectbox("Choose Option", page_options)
-    if page_selection == "Recommender System":
-        # Header contents
-        st.write('# Movie Recommender Engine')
-        st.write('### EXPLORE Data Science Academy Unsupervised Predict')
-        st.image('resources/imgs/Image_header.png',use_column_width=True)
-        # Recommender System algorithm selection
-        sys = st.radio("Select an algorithm",
+    	# -------------------------------------------------------------------
+    	# ----------- !! THIS CODE MUST NOT BE ALTERED !! -------------------
+    	# -------------------------------------------------------------------
+    	page_selection = st.sidebar.selectbox("Choose Option", page_options)
+    	if page_selection == "Recommender System":
+        	# Header contents
+        	st.write('# Movie Recommender Engine')
+        	st.write('### EXPLORE Data Science Academy Unsupervised Predict')
+        	st.image('resources/imgs/Image_header.png',use_column_width=True)
+        	# Recommender System algorithm selection
+        	sys = st.radio("Select an algorithm",
                        ('Content Based Filtering',
                         'Collaborative Based Filtering'))
 
-        # User-based preferences
-        st.write('### Enter Your Three Favorite Movies')
-        movie_1 = st.selectbox('Fisrt Option',title_list[14930:15200])
-        movie_2 = st.selectbox('Second Option',title_list[25055:25255])
-        movie_3 = st.selectbox('Third Option',title_list[21100:21200])
-        fav_movies = [movie_1,movie_2,movie_3]
+        	# User-based preferences
+        	st.write('### Enter Your Three Favorite Movies')
+        	movie_1 = st.selectbox('Fisrt Option',title_list[14930:15200])
+        	movie_2 = st.selectbox('Second Option',title_list[25055:25255])
+        	movie_3 = st.selectbox('Third Option',title_list[21100:21200])
+        	fav_movies = [movie_1,movie_2,movie_3]
 
         # Perform top-10 movie recommendation generation
         if sys == 'Content Based Filtering':
