@@ -92,7 +92,7 @@ def main():
         	fav_movies = [movie_1,movie_2,movie_3]
 		
         # Perform top-10 movie recommendation generation
-        if sys == 'Content Based Filtering':
+	if sys == 'Content Based Filtering':
 		if st.button("Recommend"):
 			try:
 				with st.spinner('Crunching the numbers...'):
