@@ -63,8 +63,8 @@ def main():
 		st.markdown('Josiah Aramide is the Infinity AI CEO')
 	if st.button('Tshepiso'): # information is hidden if button is clicked
 		st.markdown('Tshepiso Padi is the Infinity AI Product Owner')
-	if st.button('Ndinnanyi'): # information is hidden if button is clicked
-		st.markdown('Ndinanyi Justice is the Infinity AI Brand Developer')
+	#if st.button('Ndinnanyi'): # information is hidden if button is clicked
+	#	st.markdown('Ndinanyi Justice is the Infinity AI Brand Developer')
 	
     	# DO NOT REMOVE the 'Recommender System' option below, however,
     	# you are welcome to add more options to enrich your app.
