@@ -42,6 +42,18 @@ from recommenders.content_based import content_model
 # Data Loading
 title_list = load_movie_titles('resources/data/movies.csv')
 
+# Datasets
+mov = pd.read_csv('resources/data/movies.csv', sep = ",")
+ratings = pd.read_csv("resources/data/ratings.csv", sep = ",")
+imdb = pd.read_csv("resources/data/imdb_data.csv", sep = ",")
+
+# Instantiate quick pre-processing: to merge datasets for more attributes
+mov["movieId"] = mov["movieId"].astype("int")
+imdb["movieId"] = imdb["movieId"].astype("int")
+movies = pd.merge(left = mov, right = imdb, how = "left", on = "movieId")
+movies.dropna(inplace = True)
+movies.head()
+
 # App declaration
 def main():
 	st.info("Team Information - Experts and their Roles")
