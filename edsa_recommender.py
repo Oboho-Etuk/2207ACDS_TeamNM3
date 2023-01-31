@@ -16,6 +16,17 @@
 	For further help with the Streamlit framework, see:
 	https://docs.streamlit.io/en/latest/
 """
+
+# Script dependencies
+import pandas as pd
+import numpy as np
+import scipy as sp
+import pickle
+import copy
+from surprise import Reader, Dataset, SVD
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import CountVectorizer
+
 # Streamlit dependencies
 import streamlit as st
 import streamlit.components.v1 as components
@@ -39,6 +50,24 @@ title_list = load_movie_titles('resources/data/movies.csv')
 
 
 # Content Based Model
+def data_preprocessing(subset_size):
+    """Prepare data for use within Content filtering algorithm.
+    Parameters
+    ----------
+    subset_size : int
+        Number of movies to use within the algorithm.
+    Returns
+    -------
+    Pandas Dataframe
+        Subset of movies selected for content-based filtering.
+    """
+    # Split genre data into individual words.
+    movies['keyWords'] = movies['genres'].str.replace('|', ' ')
+    # Subset of the data
+    movies_subset = movies[:subset_size]
+    return movies_subset
+
+
 def content_model(movie_list,top_n=10):
     """Performs Content filtering based upon a list of movies supplied
        by the app user.
@@ -91,6 +120,60 @@ def content_model(movie_list,top_n=10):
 
 
 # Collaborative Based Model
+# Importing data
+movies_df = pd.read_csv('resources/data/movies.csv',sep = ',')
+ratings_df = pd.read_csv('resources/data/ratings.csv')
+ratings_df.drop(['timestamp'], axis=1,inplace=True)
+model=pickle.load(open('resources/models/SVD.pkl', 'rb'))
+
+def prediction_item(item_id):
+    """Map a given favourite movie to users within the
+       MovieLens dataset with the same preference.
+    Parameters
+    ----------
+    item_id : int
+        A MovieLens Movie ID.
+    Returns
+    -------
+    list
+        User IDs of users with similar high ratings for the given movie.
+    """
+    # Data preprosessing
+    reader = Reader(rating_scale=(0, 5))
+    load_df = Dataset.load_from_df(ratings_df,reader)
+    a_train = load_df.build_full_trainset()
+
+    predictions = []
+    for ui in a_train.all_users():
+        predictions.append(model.predict(iid=item_id,uid=ui, verbose = False))
+    return predictions
+
+def pred_movies(movie_list):
+    """Maps the given favourite movies selected within the app to corresponding
+    users within the MovieLens dataset.
+    Parameters
+    ----------
+    movie_list : list
+        Three favourite movies selected by the app user.
+    Returns
+    -------
+    list
+        User-ID's of users with similar high ratings for each movie.
+    """
+    # Store the id of users
+    id_store=[]
+    # For each movie selected by a user of the app,
+    # predict a corresponding user within the dataset with the highest rating
+    for i in movie_list:
+        predictions = prediction_item(item_id = i)
+        predictions.sort(key=lambda x: x.est, reverse=True)
+        # Take the top 10 user id's from each movie with highest rankings
+        for pred in predictions[:10]:
+            id_store.append(pred.uid)
+    # Return a list of user id's
+    return id_store
+
+
 def collab_model(movie_list,top_n=10):
     """Performs Collaborative filtering based upon a list of movies supplied
        by the app user.
