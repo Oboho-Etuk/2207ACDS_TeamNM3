@@ -158,7 +158,7 @@ def main():
 	st.title("Solution Overview")
 	st.write("Describe your winning approach on this page")
 
-		# Select Movies
+	# Select Movies
 	movie_list = movies['title'].values
 
 	selected_movie = st.selectbox( "Type or select a movie from the dropdown", movie_list )
