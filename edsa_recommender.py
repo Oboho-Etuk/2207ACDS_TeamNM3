@@ -26,29 +26,10 @@ import numpy as np
 import codecs
 
 # Custom Libraries
-from utils.data_loader import (load_movie_titles, read_file,\
-                                local_css, remote_css)
+from utils.data_loader import (load_movie_titles)
 from recommenders.collaborative_based import collab_model
 from recommenders.content_based import content_model
 
-
-
-#====================================load_css============================================
-def load_css(file_name):
-    with open(file_name) as f:
-        st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True)
-
-load_css("./utils/styles.css")
-
-#===================================load_icons==============================================
-def load_icon(icon_name):
-    st.markdown('<i class="material-icons">{}</i>'.format(icon_name), unsafe_allow_html=True)
-
-#=================================images loader================================================
-# Images
-def load_images(file_name):
-	img = Image.open(file_name)
-	return st.image(img,width=300)
 
 # Data Loading
 movies = pd.read_csv('resources/data/movies.csv', sep = ',',delimiter=',')
