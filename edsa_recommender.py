@@ -60,6 +60,8 @@ def main():
 		fav_movies = [movie_1,movie_2,movie_3]
 	
         # Perform top-10 movie recommendation generation
+	sys = st.sidebar.selectbox("Recommender: ", [
+                                       "Content Based Filtering", "Collaborative Based Filtering"])
 	if sys == 'Content Based Filtering':
 		if st.button("Recommend"):
 			try:
