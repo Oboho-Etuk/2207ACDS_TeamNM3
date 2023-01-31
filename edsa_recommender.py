@@ -154,7 +154,7 @@ def main():
 	
 	# ------------- SAFE FOR ALTERING/EXTENSION -------------------------
 	
-	if page_selection == "Solution Overview":
+    if page_selection == "Solution Overview":
 		st.title("Solution Overview")
 		st.write("Describe your winning approach on this page")
 
