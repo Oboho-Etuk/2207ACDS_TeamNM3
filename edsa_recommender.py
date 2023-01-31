@@ -155,8 +155,8 @@ def main():
 	# ------------- SAFE FOR ALTERING/EXTENSION -------------------------
 	
     if page_selection == "Solution Overview":
-		st.title("Solution Overview")
-		st.write("Describe your winning approach on this page")
+	st.title("Solution Overview")
+	st.write("Describe your winning approach on this page")
 
 		# Select Movies
 	movie_list = movies['title'].values
