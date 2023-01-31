@@ -34,6 +34,9 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
+# Surprise
+from surprise import Reader, Dataset, SVD, NormalPredictor
+
 # Custom Libraries
 from utils.data_loader import load_movie_titles
 from recommenders.collaborative_based import collab_model
@@ -138,26 +141,39 @@ def main():
 		st.title("Solution Overview")
 		st.write("Describe your winning approach on this page")
 	
-	# Defining Prediction Function
-
-	def predict_rating(model, df):
-
-	    predictions_data = predict_model(estimator = model, data = df)
-
-	    return predictions_data['Label'][0]
+	# Select Movies
+	movie_list = movies['title'].values
 	
-	# Loading Model
+	selected_movie = st.selectbox( "Type or select a movie from the dropdown", movie_list )
 	
-	model = load_model('https://github.com/Oboho-Etuk/2207ACDS_TeamNM3/blob/Aniedi/resources/models/knnWithMeans.pkl')
 	
-	# Predicting User Rating
-
-	if st.button('Predict'):
-
-	    prediction = predict_rating(model, movies)
-
-	    st.write(" Based on Your Items We Think You'll Like to Watch "+ str(int(prediction)))
-    	# You may want to add more sections here for aspects such as an EDA,
+	if st.button('Show Recommendation'):
+		recommended_movie_names = get_recommendations(selected_movie)
+		recommended_movie_names
+		
+		
+	# Plotly Table
+	def table(df):
+		fig=go.Figure(go.table( columnorder = [1,2,3],
+				       columnwidth = [10,28],
+				       header=dict(values=[' title','genres'],
+						   line_color='black',font=dict(color='black',size= 19),height=40,
+						   fill_color='#dd571c',#
+						   align=['left','center']),
+				       cells=dict(values=[movies.title,movies.genres],
+						  fill_color='#ffdac4',line_color='grey',
+						  font=dict(color='black', family="Lato", size=16),
+						  align='left')))
+		fig.update_layout(height=600, title ={'text': "Top 10 Movie Recommendations", 'font': {'size': 22}},title_x=0.5
+                     )
+		return fig.show()
+	
+	if st.button('Show Recommendation'):
+		recommended_movie_names = get_recommendations(selected_movie)
+		table(recommended_movie_names)
+	
+	
+	# You may want to add more sections here for aspects such as an EDA,
     	# or to provide your business pitch.
 
 
