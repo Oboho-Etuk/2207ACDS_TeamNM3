@@ -163,7 +163,6 @@ def main():
 	
 	selected_movie = st.selectbox( "Type or select a movie from the dropdown", movie_list )
 	
-	
 	if st.button('Show Recommendation'):
 		recommended_movie_names = get_recommendations(selected_movie)
 		recommended_movie_names
