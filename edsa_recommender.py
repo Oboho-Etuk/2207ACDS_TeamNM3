@@ -160,7 +160,7 @@ def main():
 		st.write("Describe your winning approach on this page")
 
 		# Select Movies
-		movie_list = movies['title'].values
+		movie_list = title_list['title'].values
 
 		selected_movie = st.selectbox( "Type or select a movie from the dropdown", movie_list )
 
@@ -177,7 +177,7 @@ def main():
 								   line_color='black',font=dict(color='black',size= 19),height=40,
 								   fill_color='#dd571c',#
 								   align=['left','center']),
-							   cells=dict(values=[movies.title,movies.genres],
+							   cells=dict(values=[title_list.title,title_list.genres],
 								  fill_color='#ffdac4',line_color='grey',
 								  font=dict(color='black', family="Lato", size=16),
 								  align='left')))
