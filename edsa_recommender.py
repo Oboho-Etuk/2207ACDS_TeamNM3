@@ -160,7 +160,7 @@ def main():
 		st.write("Describe your winning approach on this page")
 
 		# Select Movies
-		movie_list = title_list['movieId'].values
+		movie_list = title_list['movieId'].astype("int").values
 
 		selected_movie = st.selectbox( "Type or select a movie from the dropdown", movie_list )
 
