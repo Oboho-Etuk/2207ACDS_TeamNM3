@@ -152,7 +152,8 @@ def main():
             st.markdown('Nsika Masondo is the Infinity AI Quality Control Manager')
 	# -------------------------------------------------------------------
 	
-	# ------------- SAFE FOR ALTERING/EXTENSION -------------------
+	# ------------- SAFE FOR ALTERING/EXTENSION -------------------------
+	
 	if page_selection == "Solution Overview":
 		st.title("Solution Overview")
 		st.write("Describe your winning approach on this page")
