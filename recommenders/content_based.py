@@ -35,12 +35,12 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
 
 # Importing data - movies, ratings and imdb
-movies = pd.read_csv('resources/data/movies.csv', sep = ',')
+mov = pd.read_csv('resources/data/movies.csv', sep = ',')
 ratings = pd.read_csv('resources/data/ratings.csv')
 imdb = pd.read_csv('resources/data/imdb_data.csv')
 
 # instantiate quick pre-processing: to merge datasets for more attributes
-movies['movieId'] = movies['movieId'].astype('int')
+mov['movieId'] = mov['movieId'].astype('int')
 imdb['movieId'] = imdb['movieId'].astype('int')
 movies = imdb.merge(mov, on='movieId')
 movies.dropna(inplace=True)
