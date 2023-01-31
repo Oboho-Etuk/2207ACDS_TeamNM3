@@ -19,29 +19,19 @@
 # Streamlit dependencies
 import streamlit as st
 import streamlit.components.v1 as components
-#from streamlit_pandas_profiling import st_profile_report
-import sweetviz as sv
 
 # Data handling dependencies
 import pandas as pd
 import numpy as np
 import codecs
-from pandas_profiling import ProfileReport 
 
 # Custom Libraries
 from utils.data_loader import (load_movie_titles, read_file,\
                                 local_css, remote_css)
 from recommenders.collaborative_based import collab_model
 from recommenders.content_based import content_model
-from views import (html_temp, eda_header, rec_header, sweet, prof,\
-                    html_overview, slides, home)
 
 
-#===============================display a sweetviz report==================================
-def st_display_sweetviz(report_html,width=1000,height=500):
-	report_file = codecs.open(report_html,'r')
-	page = report_file.read()
-	components.html(page,width=width,height=height,scrolling=True)
 
 #====================================load_css============================================
 def load_css(file_name):
