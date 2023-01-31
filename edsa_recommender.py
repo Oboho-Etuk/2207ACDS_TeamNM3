@@ -137,7 +137,26 @@ def main():
 	if page_selection == "Solution Overview":
 		st.title("Solution Overview")
 		st.write("Describe your winning approach on this page")
+	
+	# Defining Prediction Function
 
+	def predict_rating(model, df):
+
+	    predictions_data = predict_model(estimator = model, data = df)
+
+	    return predictions_data['Label'][0]
+	
+	# Loading Model
+	
+	model = load_model('https://github.com/Oboho-Etuk/2207ACDS_TeamNM3/blob/Aniedi/resources/models/knnWithMeans.pkl')
+	
+	# Predicting User Rating
+
+	if st.button('Predict'):
+
+	    prediction = predict_rating(model, movies)
+
+	    st.write(" Based on Your Items We Think You'll Like to Watch "+ str(int(prediction)))
     	# You may want to add more sections here for aspects such as an EDA,
     	# or to provide your business pitch.
 
