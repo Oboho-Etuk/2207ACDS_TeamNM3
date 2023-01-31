@@ -32,7 +32,7 @@ from recommenders.content_based import content_model
 
 
 # Data Loading
-movies = pd.read_csv('resources/data/movies.csv', sep = ',',delimiter=',')
+movies = pd.read_csv('resources/data/movies.csv', sep = ',')
 ratings = pd.read_csv('resources/data/ratings.csv')
 movies.dropna(inplace=True)
 title_list = load_movie_titles('resources/data/movies.csv')
