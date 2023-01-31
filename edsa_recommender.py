@@ -18,25 +18,187 @@
 """
 # Streamlit dependencies
 import streamlit as st
+import streamlit.components.v1 as components
+from streamlit_pandas_profiling import st_profile_report
+import sweetviz as sv
 
 # Data handling dependencies
 import pandas as pd
 import numpy as np
+import codecs
+from pandas_profiling import ProfileReport 
 
 # Custom Libraries
-from utils.data_loader import load_movie_titles
+from utils.data_loader import (load_movie_titles, read_file,\
+                                local_css, remote_css)
 from recommenders.collaborative_based import collab_model
 from recommenders.content_based import content_model
+from views import (html_temp, eda_header, rec_header, sweet, prof,\
+                    html_overview, slides, home)
+
+
+#===============================display a sweetviz report==================================
+def st_display_sweetviz(report_html,width=1000,height=500):
+	report_file = codecs.open(report_html,'r')
+	page = report_file.read()
+	components.html(page,width=width,height=height,scrolling=True)
+
+#====================================load_css============================================
+def load_css(file_name):
+    with open(file_name) as f:
+        st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True)
+
+load_css("./utils/styles.css")
+
+#===================================load_icons==============================================
+def load_icon(icon_name):
+    st.markdown('<i class="material-icons">{}</i>'.format(icon_name), unsafe_allow_html=True)
+
+#=================================images loader================================================
+# Images
+def load_images(file_name):
+	img = Image.open(file_name)
+	return st.image(img,width=300)
 
 # Data Loading
+movies = pd.read_csv('resources/data/movies.csv', sep = ',',delimiter=',')
+ratings = pd.read_csv('resources/data/ratings.csv')
+movies.dropna(inplace=True)
 title_list = load_movie_titles('resources/data/movies.csv')
+
+
+# Content Based Model
+def content_model(movie_list,top_n=10):
+    """Performs Content filtering based upon a list of movies supplied
+       by the app user.
+    Parameters
+    ----------
+    movie_list : list (str)
+        Favorite movies chosen by the app user.
+    top_n : type
+        Number of top recommendations to return to the user.
+    Returns
+    -------
+    list (str)
+        Titles of the top-n movie recommendations to the user.
+    """
+    # Initializing the empty list of recommended movies
+    data = data_preprocessing(2000) ## CHANGE SUBSET TO MATCH RANGE IN APP
+    # Instantiating and generating the count matrix
+    count_vec = CountVectorizer()
+    count_matrix = count_vec.fit_transform(data['keyWords'])
+    names = data.copy()
+    names.set_index('movieId',inplace=True)
+    indices = pd.Series(names['title'])
+    cosine_sim = cosine_similarity(count_matrix, count_matrix)
+    cosine_sim = pd.DataFrame(cosine_sim, index = data['movieId'].values.astype(int), columns = data['movieId'].values.astype(int))
+    # Getting the index of the movie that matches the title
+    idx_1 = indices[indices == movie_list[0]].index[0]
+    idx_2 = indices[indices == movie_list[1]].index[0]
+    idx_3 = indices[indices == movie_list[2]].index[0]
+    # Creating a Series with the similarity scores in descending order
+    rank_1 = cosine_sim[idx_1]
+    rank_2 = cosine_sim[idx_2]
+    rank_3 = cosine_sim[idx_3]
+    # Calculating the scores
+    score_series_1 = pd.Series(rank_1).sort_values(ascending = False)
+    score_series_2 = pd.Series(rank_2).sort_values(ascending = False)
+    score_series_3 = pd.Series(rank_3).sort_values(ascending = False)
+    # Getting the indexes of the 10 most similar movies
+    listings = score_series_1.append(score_series_1).append(score_series_2).append(score_series_3).sort_values(ascending = False)
+
+    listings = score_series_1.append(score_series_2).append(score_series_3).sort_values(ascending = False)
+    # Store movie names
+    recommended_movies = []
+    # Appending the names of movies
+    top_50_indexes = list(listings.iloc[1:50].index)
+    # Removing chosen movies
+    top_indexes = np.setdiff1d(top_50_indexes,[idx_1,idx_2,idx_3])
+    for i in top_indexes[:top_n]:
+        recommended_movies.append(list(movies['title'])[i])
+    return recommended_movies
+
+
+# Collaborative Based Model
+def collab_model(movie_list,top_n=10):
+    """Performs Collaborative filtering based upon a list of movies supplied
+       by the app user.
+    Parameters
+    ----------
+    movie_list : list (str)
+        Favorite movies chosen by the app user.
+    top_n : type
+        Number of top recommendations to return to the user.
+    Returns
+    -------
+    list (str)
+        Titles of the top-n movie recommendations to the user.
+    """
+    names = movies_df.copy()
+    names.set_index('movieId',inplace=True)
+    indices = pd.Series(names['title'])
+    users_ids = pred_movies(movie_list)
+    # Get movie IDs and ratings for top users
+    df_init_users = ratings_df[ratings_df['userId']==users_ids[0]]
+    for i in users_ids[1:]:
+        df_init_users = df_init_users.append(ratings_df[ratings_df['userId']==i])
+    # Include predictions for chosen movies
+    for j in movie_list:
+        a = pd.DataFrame(prediction_item(j))
+        for i in set(df_init_users['userId']):
+            mid = indices[indices == j].index[0]
+            est = a['est'][a['uid']==i].values[0]
+            df_init_users = df_init_users.append(pd.Series([int(i),int(mid),est], index=['userId','movieId','rating']), ignore_index=True)
+    # Remove duplicate entries
+    df_init_users.drop_duplicates(inplace=True)
+    #Create pivot table
+    util_matrix = df_init_users.pivot_table(index=['userId'], columns=['movieId'], values='rating')
+    # Fill Nan values with 0's and save the utility matrix in scipy's sparse matrix format
+    util_matrix.fillna(0, inplace=True)
+    util_matrix_sparse = sp.sparse.csr_matrix(util_matrix.values)
+    # Compute the similarity matrix using the cosine similarity metric
+    user_similarity = cosine_similarity(util_matrix_sparse.T)
+    # Save the matrix as a dataframe to allow for easier indexing
+    user_sim_df = pd.DataFrame(user_similarity, index = util_matrix.columns, columns = util_matrix.columns)
+    user_similarity = cosine_similarity(np.array(df_init_users), np.array(df_init_users))
+    user_sim_df = pd.DataFrame(user_similarity, index = df_init_users['movieId'].values.astype(int), columns = df_init_users['movieId'].values.astype(int))
+    # Remove duplicate rows from matrix
+    user_sim_df = user_sim_df.loc[~user_sim_df.index.duplicated(keep='first')]
+    # Transpose matrix
+    user_sim_df = user_sim_df.T
+    # Find IDs of chosen load_movie_titles
+    idx_1 = indices[indices == movie_list[0]].index[0]
+    idx_2 = indices[indices == movie_list[1]].index[0]
+    idx_3 = indices[indices == movie_list[2]].index[0]
+    # Creating a Series with the similarity scores in descending order
+    rank_1 = user_sim_df[idx_1]
+    rank_2 = user_sim_df[idx_2]
+    rank_3 = user_sim_df[idx_3]
+    # Calculating the scores
+    score_series_1 = pd.Series(rank_1).sort_values(ascending = False)
+    score_series_2 = pd.Series(rank_2).sort_values(ascending = False)
+    score_series_3 = pd.Series(rank_3).sort_values(ascending = False)
+    # Appending the names of movies
+    listings = score_series_1.append(score_series_2).append(score_series_3).sort_values(ascending = False)
+    # Choose top 50
+    top_50_indexes = list(listings.iloc[1:50].index)
+    # Removing chosen movies
+    top_indexes = np.setdiff1d(top_50_indexes,[idx_1,idx_2,idx_3])
+    # Get titles of recommended movies
+    recommended_movies = []
+    for i in top_indexes[:top_n]:
+        recommended_movies.append(list(movies_df[movies_df['movieId']==i]['title']))
+    # Return list of movies
+    recommended_movies = [val for sublist in recommended_movies for val in sublist]
+    return recommended_movies
+
 
 # App declaration
 def main():
 
     # DO NOT REMOVE the 'Recommender System' option below, however,
     # you are welcome to add more options to enrich your app.
-	page_options = ["Recommender System","Solution Overview", "About The Team"]
+	page_options = ["Recommender System","Solution Overview","EDA", "About The Team"]
 	
     # -------------------------------------------------------------------
     # ----------- !! THIS CODE MUST NOT BE ALTERED !! -------------------
@@ -159,36 +321,7 @@ def main():
 			st.title("Solution Overview")
 		st.write("Describe your winning approach on this page")
 
-		# Select Movies
-		movie_list = title_list['title'].values
-
-		selected_movie = st.selectbox( "Type or select a movie from the dropdown", movie_list )
-
-		if st.button('Show Recommendation'):
-			recommended_movie_names = get_recommendations(selected_movie)
-			recommended_movie_names
-
-
-			# Plotly Table
-		def table(df):
-			fig=go.Figure(go.table( columnorder = [1,2,3],
-							   columnwidth = [10,28],
-							   header=dict(values=['title','genres'],
-								   line_color='black',font=dict(color='black',size= 19),height=40,
-								   fill_color='#dd571c',#
-								   align=['left','center']),
-							   cells=dict(values=[title_list.title,title_list.genres],
-								  fill_color='#ffdac4',line_color='grey',
-								  font=dict(color='black', family="Lato", size=16),
-								  align='left')))
-			fig.update_layout(height=600, title ={'text': "Top 10 Movie Recommendations", 'font': {'size': 22}},title_x=0.5)
-			return fig.show()
-
-		if st.button('Show Recommendation'):
-			recommended_movie_names = get_recommendations(selected_movie)
-			table(recommended_movie_names)
-	
-	
+		
 	# You may want to add more sections here for aspects such as an EDA,
     	# or to provide your business pitch.
 
