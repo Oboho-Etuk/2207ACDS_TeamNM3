@@ -180,8 +180,7 @@ def main():
 						  fill_color='#ffdac4',line_color='grey',
 						  font=dict(color='black', family="Lato", size=16),
 						  align='left')))
-		fig.update_layout(height=600, title ={'text': "Top 10 Movie Recommendations", 'font': {'size': 22}},title_x=0.5
-                     )
+		fig.update_layout(height=600, title ={'text': "Top 10 Movie Recommendations", 'font': {'size': 22}},title_x=0.5)
 		return fig.show()
 	
 	if st.button('Show Recommendation'):
