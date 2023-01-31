@@ -40,7 +40,7 @@ ratings = pd.read_csv('resources/data/ratings.csv')
 imdb = pd.read_csv('resources/data/imdb_data.csv')
 
 # instantiate quick pre-processing: to merge datasets for more attributes
-mov['movieId'] = mov['movieId'].astype('int')
+movies['movieId'] = movies['movieId'].astype('int')
 imdb['movieId'] = imdb['movieId'].astype('int')
 movies = imdb.merge(mov, on='movieId')
 movies.dropna(inplace=True)
