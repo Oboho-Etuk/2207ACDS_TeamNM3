@@ -1,29 +1,20 @@
 """
-
     Streamlit webserver-based Recommender Engine.
-
     Author: Explore Data Science Academy.
-
     Note:
     ---------------------------------------------------------------------
     Please follow the instructions provided within the README.md file
     located within the root of this repository for guidance on how to use
     this script correctly.
-
     NB: !! Do not remove/modify the code delimited by dashes !!
-
     This application is intended to be partly marked in an automated manner.
     Altering delimited code may result in a mark of 0.
     ---------------------------------------------------------------------
-
     Description: This file is used to launch a minimal streamlit web
 	application. You are expected to extend certain aspects of this script
     and its dependencies as part of your predict project.
-
 	For further help with the Streamlit framework, see:
-
 	https://docs.streamlit.io/en/latest/
-
 """
 # Streamlit dependencies
 import streamlit as st
@@ -159,6 +150,47 @@ def main():
             st.markdown('Ndinnanyi Justice is the Infinity AI Sales Manager')
         if st.button('Nsika'): # information is hidden if button is clicked
             st.markdown('Nsika Masondo is the Infinity AI Quality Control Manager')
+	# -------------------------------------------------------------------
+	
+	# ------------- SAFE FOR ALTERING/EXTENSION -------------------
+	if page_selection == "Solution Overview":
+		st.title("Solution Overview")
+		st.write("Describe your winning approach on this page")
+	
+	# Select Movies
+	movie_list = movies['title'].values
+	
+	selected_movie = st.selectbox( "Type or select a movie from the dropdown", movie_list )
+	
+	
+	if st.button('Show Recommendation'):
+		recommended_movie_names = get_recommendations(selected_movie)
+		recommended_movie_names
+		
+		
+	# Plotly Table
+	def table(df):
+		fig=go.Figure(go.table( columnorder = [1,2,3],
+				       columnwidth = [10,28],
+				       header=dict(values=[' title','genres'],
+						   line_color='black',font=dict(color='black',size= 19),height=40,
+						   fill_color='#dd571c',#
+						   align=['left','center']),
+				       cells=dict(values=[movies.title,movies.genres],
+						  fill_color='#ffdac4',line_color='grey',
+						  font=dict(color='black', family="Lato", size=16),
+						  align='left')))
+		fig.update_layout(height=600, title ={'text': "Top 10 Movie Recommendations", 'font': {'size': 22}},title_x=0.5
+                     )
+		return fig.show()
+	
+	if st.button('Show Recommendation'):
+		recommended_movie_names = get_recommendations(selected_movie)
+		table(recommended_movie_names)
+	
+	
+	# You may want to add more sections here for aspects such as an EDA,
+    	# or to provide your business pitch.
 
 
 if __name__ == '__main__':
