@@ -150,7 +150,6 @@ def main():
             st.markdown('Ndinnanyi Justice is the Infinity AI Sales Manager')
         if st.button('Nsika'): # information is hidden if button is clicked
             st.markdown('Nsika Masondo is the Infinity AI Quality Control Manager')
-
 	# -------------------------------------------------------------------
 	
 	# ------------- SAFE FOR ALTERING/EXTENSION -------------------
