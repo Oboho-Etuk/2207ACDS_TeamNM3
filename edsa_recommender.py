@@ -52,7 +52,6 @@ mov["movieId"] = mov["movieId"].astype("int")
 imdb["movieId"] = imdb["movieId"].astype("int")
 movies = pd.merge(left = mov, right = imdb, how = "left", on = "movieId")
 movies.dropna(inplace = True)
-movies.head()
 
 # App declaration
 def main():
@@ -79,7 +78,7 @@ def main():
 		st.markdown('Tshepiso Padi is the Infinity AI Product Owner')
 	if st.button('Ndinnanyi'): # information is hidden if button is clicked
 		st.markdown('Ndinanyi Justice is the Infinity AI Brand Developer')
-	movies.head()
+	
 	
     	# DO NOT REMOVE the 'Recommender System' option below, however,
     	# you are welcome to add more options to enrich your app.
@@ -101,8 +100,8 @@ def main():
 	
         	# User-based preferences
         	st.write('### Enter Your Three Favorite Movies')
-        	movie_1 = st.selectbox('Fisrt Option',title_list[14930:15200])
-        	movie_2 = st.selectbox('Second Option',title_list[25055:25255])
+        	movie_1 = st.selectbox('Fisrt Option',movies[14930:15200])
+        	movie_2 = st.selectbox('Second Option',movies[25055:25255])
         	movie_3 = st.selectbox('Third Option',title_list[21100:21200])
         	fav_movies = [movie_1,movie_2,movie_3]
 		
