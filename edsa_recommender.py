@@ -19,7 +19,7 @@
 # Streamlit dependencies
 import streamlit as st
 import streamlit.components.v1 as components
-from streamlit_pandas_profiling import st_profile_report
+#from streamlit_pandas_profiling import st_profile_report
 import sweetviz as sv
 
 # Data handling dependencies
