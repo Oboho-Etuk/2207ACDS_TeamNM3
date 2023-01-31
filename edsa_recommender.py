@@ -154,38 +154,38 @@ def main():
 	
 	# ------------- SAFE FOR ALTERING/EXTENSION -------------------------
 	
-	if page_selection == "Solution Overview":
-		st.title("Solution Overview")
-		st.write("Describe your winning approach on this page")
-	
-	# Select Movies
-	movie_list = movies['title'].values
-	
-	selected_movie = st.selectbox( "Type or select a movie from the dropdown", movie_list )
-	
-	if st.button('Show Recommendation'):
-		recommended_movie_names = get_recommendations(selected_movie)
-		recommended_movie_names
-		
-		
-	# Plotly Table
-	def table(df):
-		fig=go.Figure(go.table( columnorder = [1,2,3],
-				       columnwidth = [10,28],
-				       header=dict(values=[' title','genres'],
-						   line_color='black',font=dict(color='black',size= 19),height=40,
-						   fill_color='#dd571c',#
-						   align=['left','center']),
-				       cells=dict(values=[movies.title,movies.genres],
-						  fill_color='#ffdac4',line_color='grey',
-						  font=dict(color='black', family="Lato", size=16),
-						  align='left')))
-		fig.update_layout(height=600, title ={'text': "Top 10 Movie Recommendations", 'font': {'size': 22}},title_x=0.5)
-		return fig.show()
-	
-	if st.button('Show Recommendation'):
-		recommended_movie_names = get_recommendations(selected_movie)
-		table(recommended_movie_names)
+		if page_selection == "Solution Overview":
+			st.title("Solution Overview")
+			st.write("Describe your winning approach on this page")
+
+		# Select Movies
+		movie_list = movies['title'].values
+
+		selected_movie = st.selectbox( "Type or select a movie from the dropdown", movie_list )
+
+		if st.button('Show Recommendation'):
+			recommended_movie_names = get_recommendations(selected_movie)
+			recommended_movie_names
+
+
+		# Plotly Table
+		def table(df):
+			fig=go.Figure(go.table( columnorder = [1,2,3],
+						   columnwidth = [10,28],
+						   header=dict(values=[' title','genres'],
+							   line_color='black',font=dict(color='black',size= 19),height=40,
+							   fill_color='#dd571c',#
+							   align=['left','center']),
+						   cells=dict(values=[movies.title,movies.genres],
+							  fill_color='#ffdac4',line_color='grey',
+							  font=dict(color='black', family="Lato", size=16),
+							  align='left')))
+			fig.update_layout(height=600, title ={'text': "Top 10 Movie Recommendations", 'font': {'size': 22}},title_x=0.5)
+			return fig.show()
+
+		if st.button('Show Recommendation'):
+			recommended_movie_names = get_recommendations(selected_movie)
+			table(recommended_movie_names)
 	
 	
 	# You may want to add more sections here for aspects such as an EDA,
