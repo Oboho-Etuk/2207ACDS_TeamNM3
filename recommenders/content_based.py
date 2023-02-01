@@ -119,14 +119,14 @@ def content_model(movie_list,top_n=10):
     count_matrix = count_vec.fit_transform(data['keyWords'])
     
     # Instantiate a scaler to standardize the matrix output
-    ss = StandardScaler()
-    count_matrix_scaled = ss.fit_transform(count_matrix) 
+    #ss = StandardScaler()
+    #count_matrix_scaled = ss.fit_transform(count_matrix) 
     
     # apply dimensionality reduction using PCA
-    count_matrix_pca = decomposition.PCA(n_components=2).fit_transform(count_matrix_scaled)
+    #count_matrix_pca = decomposition.PCA(n_components=2).fit_transform(count_matrix_scaled)
     
     indices = pd.Series(data['title'])
-    cosine_sim = cosine_similarity(count_matrix_pca, count_matrix_pca)
+    cosine_sim = cosine_similarity(count_matrix, count_matrix)
     # Getting the index of the movie that matches the title
     idx_1 = indices[indices == movie_list[0]].index[0]
     idx_2 = indices[indices == movie_list[1]].index[0]

@@ -5,7 +5,7 @@ from PIL import Image
 
 st.title("Projects")
 
-st.subheader("Infinity One")
+st.subheader("Infinity [One](http://52.30.55.119:5000/#movie-recommender-engine)")
 
 st.subheader("Infinity Advantage")
 
