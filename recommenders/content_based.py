@@ -35,15 +35,18 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
 
 # Importing data - movies, ratings and imdb
-##movies = pd.read_csv('resources/data/movies.csv', sep = ',')
 mov = pd.read_csv('resources/data/movies.csv', sep = ',')
+#mov = pd.read_csv('resources/data/movies.csv', sep = ',')
 ratings = pd.read_csv('resources/data/ratings.csv')
-imdb = pd.read_csv('resources/data/imdb_data.csv')
+imdb = pd.read_csv('resources/data/imdb_data.csv', sep = ',')
 
 # instantiate quick pre-processing: to merge datasets for more attributes
 mov['movieId'] = mov['movieId'].astype('int')
 imdb['movieId'] = imdb['movieId'].astype('int')
-movies = imdb.merge(mov, on='movieId')
+#movies = pd.merge(left=mov, right=imdb, how='left', on='movieId', suffixes=('', '_drop')).filter(regex='^(?!.*_drop)')
+#movies = mov.copy()
+movies = mov.merge(imdb, on='movieId')
+#movies = movies[['title', 'title_cast', 'director', 'plot_keywords', 'genres']]
 movies.dropna(inplace=True)
 
 def data_preprocessing(subset_size):
@@ -62,14 +65,22 @@ def data_preprocessing(subset_size):
     """
     # Split genre data into individual words.
     # select 
-    elements = ['title_cast', 'director', 'plot_keywords', 'genres']
-    for item in elements:
-        movies[item] = movies[item].str.lower().str.replace(' ', '').str.replace('|', ' ')
-    movies['keyWords'] = movies['plot_keywords'] \
-                        + ' ' + movies['title_cast'] \
-                        + ' ' + movies['director']   \
-                        + ' ' + movies['genres']     \
+    #elements = ['title_cast', 'director', 'plot_keywords', 'genres']
+    #for item in elements:
+    ##    movies[item] = movies[item].str.lower().str.replace(' ', '').str.replace('|', ' ')
+    #    movies[item] = movies[item].str.lower().str.replace(' ', '')
+    #elements2 = ['title_cast', 'plot_keywords', 'genres']
+    ##for items in elements2:
+      #  movies[items] = movies[items].str.replace('|', ' ')
+    # collect keywords to apply vectorizer
+    ##movies['keyWords'] = movies['plot_keywords'] \
+    #                    + ' ' + movies['title_cast'] \
+    #                    + ' ' + movies['director']   \
+    #                    + ' ' + movies['genres']     \
     ##movies['keyWords'] = movies['genres'].str.replace('|', ' ')
+    genres = movies['genres'].str.lower().str.replace(' ', '').str.replace('|', ' ')
+    movies['keyWords'] = genres.str()
+    ##movies['keyWords'] = movies['genres'].str.lower().str.replace('|', ' ')
     # Subset of the data
     movies_subset = movies[:subset_size]
     return movies_subset
