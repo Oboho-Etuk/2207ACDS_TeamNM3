@@ -71,7 +71,7 @@ def prediction_item(item_id):
 
     predictions = []
     for ui in a_train.all_users():
-        predictions.append(model.predict(iid=item_id,uid=ui, verbose = False)[3])
+        predictions.append(model.predict(iid=item_id,uid=ui, verbose = False)) #removed zero
     return predictions
 
 def pred_movies(movie_list):
@@ -91,14 +91,16 @@ def pred_movies(movie_list):
     """
     # Store the id of users
     id_store=[]
+    indices = pd.Series(movies_df['movieId'])
     # For each movie selected by a user of the app,
     # predict a corresponding user within the dataset with the highest rating
-    for i in movie_list:
+    for movie in movie_list:   #check length
+        i = indices[movie]
         predictions = prediction_item(item_id = i)
         predictions.sort(key=lambda x: x.est, reverse=True)
         # Take the top 10 user id's from each movie with highest rankings
         for pred in predictions[:10]:
-            id_store.append(pred.uid)
+            id_store.append(pred.uid) #check to remove .uid
     # Return a list of user id's
     return id_store
 
@@ -122,10 +124,11 @@ def collab_model(movie_list,top_n=10):
 
     """
 
-    indices = pd.Series(movies_df.index, index=movies_df['title'])
+    ##indices = pd.Series(movies_df.index, index=movies_df['title'])
+    indices = pd.Series(movies_df['title'])
     movie_ids = pred_movies(movie_list)
-    df_init_users = ratings_df[ratings_df['userId']==movie_ids[0]]
-    for i in movie_ids :
+    df_init_users = ratings_df[ratings_df['userId']==movie_ids[0]] # check to remove [0]
+    for i in movie_ids:
         df_init_users=df_init_users.append(ratings_df[ratings_df['userId']==i])
     # Getting the cosine similarity matrix
     cosine_sim = cosine_similarity(np.array(df_init_users), np.array(df_init_users))
@@ -141,7 +144,7 @@ def collab_model(movie_list,top_n=10):
     score_series_2 = pd.Series(rank_2).sort_values(ascending = False)
     score_series_3 = pd.Series(rank_3).sort_values(ascending = False)
      # Appending the names of movies
-    listings = score_series_1.append(score_series_1).append(score_series_2).append(score_series_3).sort_values(ascending = False)
+    listings = score_series_1.append(score_series_1).append(score_series_3).sort_values(ascending = False)
     recommended_movies = []
     # Choose top 50
     top_50_indexes = list(listings.iloc[1:50].index)

@@ -27,6 +27,8 @@
 """
 # Streamlit dependencies
 import streamlit as st
+import joblib,os
+from PIL import Image
 
 # Data handling dependencies
 import pandas as pd
@@ -36,6 +38,8 @@ import numpy as np
 from utils.data_loader import load_movie_titles
 from recommenders.collaborative_based import collab_model
 from recommenders.content_based import content_model
+
+st.header("Infinity One")
 
 # Data Loading
 title_list = load_movie_titles('resources/data/movies.csv')
@@ -102,63 +106,76 @@ def main():
     # ------------- SAFE FOR ALTERING/EXTENSION -------------------
     if page_selection == "Solution Overview":
         st.title("Solution Overview")
+        st.subheader("Introduction")
         st.markdown("Around the world, movie industries have been blessed with creative geniuses in the form of directors,   \
             screenwriters, actors, sound designers and cinematographers. Together with the rise in popularity of portable    \
             devices, capable of hosting streaming services, movies have ensured that people can stay glued to their          \
-            favourites whether in transit or in the corners of their homes. \
-            \
-            \
-            However, the spread into a plethora of genres ranging from romance to comedy to science fiction to horror has     \
+            favourites whether in transit or in the corners of their homes.")
+
+        st.markdown("However, the spread into a plethora of genres ranging from romance to comedy to science fiction to horror has     \
             created a new problem of information overload, where choice and decision-making for individuals has become        \
-            quite challenging.\
-            \
-            \
-            In today’s technology driven world, there have been several attempts to solving this problem using recommender \
+            quite challenging.")
+            
+        
+        st.markdown("In today’s technology driven world, there have been several attempts to solving this problem using recommender \
             systems. These systems are basically a subclass of intelligent information filtering processes that provide    \
             suggestions for items that are most pertinent to a particular user.")
         
         st.subheader("Approach")
         st.markdown("In this project, the **Infinity AI** team identifies some insights into data that can be used for the \
-        development of a few recommender systems. The team explores eight datasets of more than 48000 movies and over   \
+        development of a few recommender systems.") 
+        
+        st.markdown("The team explores eight datasets of more than 48000 movies and over   \
         160000 users with up to 15 million of datapoints containing movie ratings, genres, keywords, and so on collected   \
-        from Explore Ai Academy (EDSA) and the MovieLens datasets. Using these datasets, the team attempts to answer       \
-        various questions about movies. Delivering an accurate and robust solution to this challenge has immense economic  \
-        potential for industry clients, with users of the system being exposed to content they would like to view or       \
-        purchase - generating revenue and platform affinity.")
+        from Explore Ai Academy (EDSA) and the MovieLens datasets.")
+
+        st.markdown("The project stages involved:")
+        st.markdown("1. Data Pre-processing")
+        st.markdown("2. Exploratory Data Analysis (EDA)")
+        st.markdown("3. Feature Engineering")
+        st.markdown("4. Model Development, and")
+        st.markdown("5. Model Evaluation")
+
+        st.markdown("During the EDA phase, insights were identified around features including - Genres, Directors, Cast, and      \
+            Plot Keywords of the movies.") 
+        st.markdown("Using the available datasets, the team further dimensioned the analysis in attempts to answer       \
+        various questions about movies people love to watch. Delivering an accurate and robust solution to this challenge           \
+        has immense economic potential for industry clients, with users of the system being exposed to content they would       \
+        like to view or purchase - generating revenue and platform affinity.")
     # You may want to add more sections here for aspects such as an EDA,
     # or to provide your business pitch.
     
     if page_selection == "About The Team":
         st.title("About The Team")
 
-        st.markdown("Infinity AI is a leading data science firm and AI-powered solutions provider with its own R&D Center. \
-        \
-        \
-        Infinity AI’s mission is to help clients improve competitiveness and get great results from deploying tools in their \
-        businesses. The team strives to reach these goals by applying innovative and proprietary development technologies,   \
-        providing exceptional services, and using excellent professional expertise.                                          \
-        \
-        \
-        Infinity AI is reputed for helping businesses get valuable insights from data, support customer retention while      \
-        minimizing churn, optimize earnings, automate repetitive tasks, enhance performance, add AI-driven features, and     \
-        prevent cost overruns.")
+        #image = Image.open('Logo2_Infinity.png')
+        st.image('resources/imgs/Logo2_Infinity.png', caption='Infinity AI')
+
+        st.markdown("Infinity AI is a leading data science firm and AI-powered solutions provider with its own R&D Center.")
+        
+        st.markdown("Infinity AI’s mission is to help clients improve competitiveness and get great results from deploying \
+        tools in their businesses. The team strives to reach these goals by applying innovative and proprietary development \
+        technologies, providing exceptional services, and using excellent professional expertise.")
+        
+        st.markdown("Infinity AI is reputed for helping businesses get valuable insights from data, support customer    \
+        retention while minimizing churn, optimize earnings, automate repetitive tasks, enhance performance, add        \
+        AI-driven features, and prevent cost overruns.")
 
         st.write("Roles and Responsibilities of the Team")
         st.subheader("Meet the Team")
         if st.button('Bongani'): # information is hidden if button is clicked
-            st.markdown('Bongani Mavuso is a Infinity AI CEO')
+            st.markdown('Bongani Mavuso is the Infinity AI CEO')
         if st.button('Aniedi'): # information is hidden if button is clicked
-            st.markdown('Aniedi Oboho-Etuk is the Infinity AI Developer')
+            st.markdown('Aniedi Oboho-Etuk is the Infinity AI Data Engineer')
         if st.button('Tshepiso'): # information is hidden if button is clicked
-            st.markdown('Tshepiso Padi is a Infinity Project Manager')
+            st.markdown('Tshepiso Padi is the Infinity Project Manager/Business Analyst')
         if st.button('Josiah'): # information is hidden if button is clicked
-            st.markdown('Josiah Aramide is the Infinity AI Developer/Strategist')
+            st.markdown('Josiah Aramide is the Infinity AI Software Developer/Strategist')
         if st.button('Manoko'): # information is hidden if button is clicked
             st.markdown('Manoko Langa is the Infinity AI Communications Manager')
         if st.button('Justice'): # information is hidden if button is clicked
             st.markdown('Ndinnanyi Justice is the Infinity AI Sales Manager')
-        if st.button('Nsika'): # information is hidden if button is clicked
-            st.markdown('Nsika Masondo is the Infinity AI Quality Control Manager')
+        
 
 
 if __name__ == '__main__':
