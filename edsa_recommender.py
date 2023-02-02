@@ -36,7 +36,7 @@ import numpy as np
 
 # Custom Libraries
 from utils.data_loader import load_movie_titles
-from recommenders.collaborative_based2 import collab_model
+from recommenders.collaborative_based import collab_model
 from recommenders.content_based import content_model
 
 st.header("Infinity One")
