@@ -41,8 +41,10 @@ from sklearn.feature_extraction.text import CountVectorizer
 movies_df = pd.read_csv('resources/data/movies.csv',sep = ',')
 ratings_df = pd.read_csv('resources/data/ratings.csv')
 #ratings_df = ratings_df.merge(movies_df, on='movieId')
-ratings_df.drop(['timestamp'], axis=1,inplace=True)
 
+# Rapid cleaning and pruning of dataframes to use
+movies_df.drop(['genres'], axis=1, inplace=True)
+ratings_df.drop(['timestamp'], axis=1,inplace=True)
 
 # We make use of an SVD model trained on a subset of the MovieLens 10k dataset.
 model=pickle.load(open('resources/models/small_svd.pkl', 'rb'))
@@ -66,8 +68,7 @@ def prediction_item(item_id):
     reader = Reader(rating_scale=(0, 5))
     load_df = Dataset.load_from_df(ratings_df,reader)
     a_train = load_df.build_full_trainset()
-    model.fit(a_train)
-
+    #model.fit(a_train)
 
     predictions = []
     for ui in a_train.all_users():
@@ -91,16 +92,16 @@ def pred_movies(movie_list):
     """
     # Store the id of users
     id_store=[]
-    indices = pd.Series(movies_df['movieId'])
+    #indices = pd.Series(movies_df['movieId'])
+
     # For each movie selected by a user of the app,
     # predict a corresponding user within the dataset with the highest rating
-    for movie in movie_list:   #check length
-        i = indices[movie]
+    for i in movie_list:
         predictions = prediction_item(item_id = i)
         predictions.sort(key=lambda x: x.est, reverse=True)
         # Take the top 10 user id's from each movie with highest rankings
-        for pred in predictions[:50]:
-            id_store.append(pred.uid) #check to remove .uid
+        for pred in predictions[:10]:
+            id_store.append(pred.uid)
     # Return a list of user id's
     return id_store
 
@@ -123,33 +124,68 @@ def collab_model(movie_list,top_n=10):
         Titles of the top-n movie recommendations to the user.
 
     """
+    # use movieId from list of movies
+    # to return userIds from the result
+    #indices = pd.Series(movies_df['title'])
+    userIds = pred_movies(movie_list) # a list of userIds
+    
+    # get similar users from ratings dataframe
+    df_init_users = ratings_df[ratings_df['userId']==userIds[0]]
 
-    ##indices = pd.Series(movies_df.index, index=movies_df['title'])
-    indices = pd.Series(movies_df['title'])
-    movie_ids = pred_movies(movie_list)
-    df_init_users = ratings_df[ratings_df['userId']==movie_ids[0]] # check to remove [0]
-    for i in movie_ids:
-        df_init_users=df_init_users.append(ratings_df[ratings_df['userId']==i])
-    # Getting the cosine similarity matrix
-    cosine_sim = cosine_similarity(np.array(df_init_users), np.array(df_init_users))
-    idx_1 = indices[indices == movie_list[0]].index[0]
-    idx_2 = indices[indices == movie_list[1]].index[0]
-    idx_3 = indices[indices == movie_list[2]].index[0]
-    # Creating a Series with the similarity scores in descending order
-    rank_1 = cosine_sim[idx_1]
-    rank_2 = cosine_sim[idx_2]
-    rank_3 = cosine_sim[idx_3]
-    # Calculating the scores
-    score_series_1 = pd.Series(rank_1).sort_values(ascending = False)
-    score_series_2 = pd.Series(rank_2).sort_values(ascending = False)
-    score_series_3 = pd.Series(rank_3).sort_values(ascending = False)
-     # Appending the names of movies
-    listings = score_series_1.append(score_series_1).append(score_series_3).sort_values(ascending = False)
-    recommended_movies = []
-    # Choose top 50
-    top_50_indexes = list(listings.iloc[1:50].index)
-    # Removing chosen movies
-    top_indexes = np.setdiff1d(top_50_indexes,[idx_1,idx_2,idx_3])
-    for i in top_indexes[:top_n]:
-        recommended_movies.append(list(movies_df['title'])[i])
+    # add other users by merging dataframes - ratings and movies 
+    df_init_users = pd.merge(df_init_users, movies_df, on="movieId", how="inner")
+    def get_movieId(movie_list):
+        movieId = []
+        # loop the movie list
+        for movie in movie_list:
+            res = movieId.append(int(movies_df['movieId'][movies_df['title'] == movie]))
+        return res
+    
+    # get new users with similar ratings
+    new_users_Id = [450000, 450000, 450000]
+    new_users_movieId = [get_movieId(movie_list)]
+    new_users_title = [movie_list[0], movie_list[1], movie_list[2]]
+    new_users_rating = [4.5, 5.0, 5.0]
+    listK = ['userId', 'movieId', 'title', 'rating']
+    listV = [new_users_Id, new_users_movieId, new_users_title, new_users_rating]
+    # build dictionary of new users...new_users_dict = {}
+    new_users_dict = dict(zip(listK, listV))
+    
+    # make dictionary into a dataframe and append to initial users with continuous index
+    new_users_df = pd.DataFrame.from_dict(new_users_dict) 
+    df_init_users = df_init_users.append(new_users_df, ignore_index=True) 
+
+    # create a utility matrix of our pool of users
+    util_matrix = df_init_users.pivot_table(index='userId', columns='title', values='rating')
+    util_matrix.fillna(0, inplace=True)
+
+    # develop cosine similarity for the utility matrix
+    cosine_sim = cosine_similarity(util_matrix, util_matrix)
+    
+    # get the resulting similarity dataframe
+    util_sim_df = pd.DataFrame(cosine_sim, index=util_matrix.columns, columns=util_matrix.columns )
+    
+    # get recommendations for N most similar movies
+    def get_recs(movie_list, N):
+        for movie in movie_list:
+            sim_scores = list(enumerate(util_sim_df[movie]))
+            sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+            #sim_scores = sim_scores.sort_values(ascending=False)       #alternative if above fails
+            sim_scores = sim_scores[1:N+1]
+            top_movies = [sim_scores[title] for title in util_sim_df.index]
+            return top_movies
+    
+    # store the movie titles recommended
+    top_movies = []
+
+    # calculate the cumulative score for each movie in the df
+    for movie in get_recs(movie_list, N=10):
+        if movie in movie_list:
+            pass
+        else:
+            # append the movie title on the list
+            top_movies.append(movie)
+    # get the top n movies
+    recommended_movies = top_movies[:top_n]
+    # return the recommended movies
     return recommended_movies

@@ -28,6 +28,7 @@
 # Streamlit dependencies
 import streamlit as st
 import joblib,os
+import glob
 from PIL import Image
 
 # Data handling dependencies
@@ -38,6 +39,17 @@ import numpy as np
 from utils.data_loader import load_movie_titles
 from recommenders.collaborative_based import collab_model
 from recommenders.content_based import content_model
+
+# Company Logo
+def add_logo(logo_path, width, height):
+    """Read and return a resized logo"""
+    logo = Image.open(logo_path)
+    modified_logo = logo.resize((width, height))
+    return modified_logo
+
+my_logo = add_logo(logo_path='resources/imgs/Logo2_Infinity.png', width=150, height=150)
+st.image(my_logo)
+st.sidebar.image(add_logo(logo_path='resources/imgs/Logo2_Infinity.png', width=75, height=75))
 
 st.header("Infinity One")
 
@@ -115,7 +127,6 @@ def main():
         st.markdown("However, the spread into a plethora of genres ranging from romance to comedy to science fiction to horror has     \
             created a new problem of information overload, where choice and decision-making for individuals has become        \
             quite challenging.")
-            
         
         st.markdown("In today’s technology driven world, there have been several attempts to solving this problem using recommender \
             systems. These systems are basically a subclass of intelligent information filtering processes that provide    \
@@ -149,7 +160,8 @@ def main():
         st.title("About The Team")
 
         #image = Image.open('Logo2_Infinity.png')
-        st.image('resources/imgs/Logo2_Infinity.png', caption='Infinity AI')
+        st.image('resources/imgs/Logo2_Infinity.png', use_column_width='auto', caption='Infinity AI')
+        #st.image(add_logo(logo_path='resources/imgs/Logo2_Infinity.png', width=400, height=400))
 
         st.markdown("Infinity AI is a leading data science firm and AI-powered solutions provider with its own R&D Center.")
         
@@ -165,16 +177,22 @@ def main():
         st.subheader("Meet the Team")
         if st.button('Bongani'): # information is hidden if button is clicked
             st.markdown('Bongani Mavuso is the Infinity AI CEO')
+            st.image(add_logo(logo_path='resources/imgs/Bongani.jpeg', width=300, height=300))
         if st.button('Aniedi'): # information is hidden if button is clicked
             st.markdown('Aniedi Oboho-Etuk is the Infinity AI Data Engineer')
+            st.image(add_logo(logo_path='resources/imgs/Aniedi_NM3.png', width=300, height=300))
         if st.button('Tshepiso'): # information is hidden if button is clicked
             st.markdown('Tshepiso Padi is the Infinity Project Manager/Business Analyst')
+            st.image(add_logo(logo_path='resources/imgs/Tshepiso.jpeg', width=250, height=300))
         if st.button('Josiah'): # information is hidden if button is clicked
             st.markdown('Josiah Aramide is the Infinity AI Software Developer/Strategist')
+            st.image(add_logo(logo_path='resources/imgs/Josiah_Aramide_hd.jpeg', width=255, height=300))
         if st.button('Manoko'): # information is hidden if button is clicked
             st.markdown('Manoko Langa is the Infinity AI Communications Manager')
+            st.image(add_logo(logo_path='resources/imgs/Manoko.jpg', width=220, height=300))
         if st.button('Justice'): # information is hidden if button is clicked
             st.markdown('Ndinnanyi Justice is the Infinity AI Sales Manager')
+            st.image(add_logo(logo_path='resources/imgs/Justice.jpeg', width=250, height=300))
         
 
 
