@@ -32,19 +32,18 @@ import os
 import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.preprocessing import StandardScaler # for standardization
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import PCA
+from sklearn import (manifold, datasets, decomposition, ensemble,
+                     discriminant_analysis, random_projection, preprocessing)
 
 # Importing data - movies, ratings and imdb
-##movies = pd.read_csv('resources/data/movies.csv', sep = ',')
 mov = pd.read_csv('resources/data/movies.csv', sep = ',')
 ratings = pd.read_csv('resources/data/ratings.csv')
-imdb = pd.read_csv('resources/data/imdb_data.csv')
+imdb = pd.read_csv('resources/data/imdb_data.csv', sep = ',')
 
-# instantiate quick pre-processing: to merge datasets for more attributes
-mov['movieId'] = mov['movieId'].astype('int')
-imdb['movieId'] = imdb['movieId'].astype('int')
-movies = imdb.merge(mov, on='movieId')
-movies.dropna(inplace=True)
 
 def data_preprocessing(subset_size):
     """Prepare data for use within Content filtering algorithm.
@@ -60,17 +59,35 @@ def data_preprocessing(subset_size):
         Subset of movies selected for content-based filtering.
 
     """
-    # Split genre data into individual words.
-    # select 
-    elements = ['title_cast', 'director', 'plot_keywords', 'genres']
-    for item in elements:
-        movies[item] = movies[item].str.lower().str.replace(' ', '').str.replace('|', ' ')
-    movies['keyWords'] = movies['plot_keywords'] \
-                        + ' ' + movies['title_cast'] \
-                        + ' ' + movies['director']   \
-                        + ' ' + movies['genres']     \
-    ##movies['keyWords'] = movies['genres'].str.replace('|', ' ')
-    # Subset of the data
+    # instantiate quick pre-processing: to merge datasets for more attributes
+    mov['movieId'] = mov['movieId'].astype('int')
+    imdb['movieId'] = imdb['movieId'].astype('int')
+    # merge on movieId present in both mov and imdb datasets
+    movies = mov.copy()
+    ##movies = mov.merge(imdb, on='movieId')
+    
+    # clean data
+    movies.dropna(inplace=True)
+
+    # select columns from merged dataset - title_cast, director, plot_keywords and genres
+    ##movies = movies[['title_cast', 'director', 'plot_keywords', 'genres']]
+    ##elements = ['title_cast', 'director', 'plot_keywords', 'genres']
+    ##for item in elements:
+    ##    movies[item] = movies[item].str.lower().str.replace(' ', '').str.replace('|', ' ')
+    
+    # collect keywords to apply vectorizer
+    ##movies['keyWords'] = movies['plot_keywords'] \
+    ##                    + ' ' + movies['title_cast'] \
+    ##                    + ' ' + movies['director']   \
+    ##                    + ' ' + movies['genres']     \
+    
+    # Split genre data into individual words
+    genres = movies['genres'].str.lower().str.replace(' ', '').str.replace('|', ' ')
+    ##title_cast = movies['title_cast'].str.lower().str.replace(' ', '').str.replace('|', ' ')
+    ##movies['keyWords'] = genres + ' ' + title_cast
+    movies['keyWords'] = genres
+    
+    # obtain subset of the data
     movies_subset = movies[:subset_size]
     return movies_subset
 
@@ -100,7 +117,14 @@ def content_model(movie_list,top_n=10):
     # Instantiating and generating the count matrix
     count_vec = CountVectorizer(stop_words='english')
     count_matrix = count_vec.fit_transform(data['keyWords'])
-    ##indices = pd.Series(data.index, index=data['title'])
+    
+    # Instantiate a scaler to standardize the matrix output
+    #ss = StandardScaler()
+    #count_matrix_scaled = ss.fit_transform(count_matrix) 
+    
+    # apply dimensionality reduction using PCA
+    #count_matrix_pca = decomposition.PCA(n_components=2).fit_transform(count_matrix_scaled)
+    
     indices = pd.Series(data['title'])
     cosine_sim = cosine_similarity(count_matrix, count_matrix)
     # Getting the index of the movie that matches the title
@@ -116,7 +140,7 @@ def content_model(movie_list,top_n=10):
     score_series_2 = pd.Series(rank_2).sort_values(ascending = False)
     score_series_3 = pd.Series(rank_3).sort_values(ascending = False)
     # Getting the indexes of the 10 most similar movies
-    listings = score_series_1.append(score_series_1).append(score_series_2).append(score_series_3).sort_values(ascending = False)
+    listings = score_series_1.append(score_series_1).append(score_series_3).sort_values(ascending = False)
 
     # Store movie names
     recommended_movies = []
@@ -125,5 +149,5 @@ def content_model(movie_list,top_n=10):
     # Removing chosen movies
     top_indexes = np.setdiff1d(top_50_indexes,[idx_1,idx_2,idx_3])
     for i in top_indexes[:top_n]:
-        recommended_movies.append(list(movies['title'])[i])
+        recommended_movies.append(list(data['title'])[i])
     return recommended_movies

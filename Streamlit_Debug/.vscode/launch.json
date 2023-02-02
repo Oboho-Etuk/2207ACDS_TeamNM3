@@ -1,0 +1,25 @@
+{
+    "configurations": [
+
+        {
+            "name": "Python:Streamlit",
+            "type": "python",
+            "request": "launch",
+            "module": "streamlit",
+            "args": [
+                "run",
+                "${file}"
+            ],
+        },
+        {
+            "name": "Python:StreamlitSALES",
+            "type": "python",
+            "request": "launch",
+            "module": "streamlit",
+            "args": [
+                "run",
+                "${file}"
+            ],
+        }
+    ]
+}
