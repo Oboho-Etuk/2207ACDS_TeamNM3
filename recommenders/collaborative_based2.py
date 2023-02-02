@@ -68,7 +68,7 @@ def prediction_item(item_id):
     reader = Reader(rating_scale=(0, 5))
     load_df = Dataset.load_from_df(ratings_df,reader)
     a_train = load_df.build_full_trainset()
-    #model.fit(a_train)
+    model.fit(a_train)
 
     predictions = []
     for ui in a_train.all_users():
