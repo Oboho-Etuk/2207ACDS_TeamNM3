@@ -16,7 +16,7 @@ st.sidebar.image(my_logo)
 # Page Title
 st.title("Projects")
 
-st.subheader("Infinity [One](http://34.241.15.160:5000/#movie-recommender-engine)")
+st.subheader("Infinity [One](http://34.240.196.43:5000/#movie-recommender-engine)")
 
 st.subheader("Infinity Advantage")
 
